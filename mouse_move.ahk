@@ -20,6 +20,13 @@ PopSpeed() {
     MouseMode.speed := MouseMode.speedStack[-1] ; the first speed must be originalSpeed
 }
 
+ArrToStr1d(arr) {
+    str := ""
+    for _,v in arr
+        str .= v ","
+    return str
+}
+
 ; mode switch
 ^+[:: {
     global MouseMode
@@ -89,6 +96,14 @@ c up::Click("Up")
 ; wheel up and down
 u::Click("WheelUp")
 i::Click("WheelDown")
+
+; print messages for debug
+p:: {
+    global MouseMode
+    speedStr := "SpeedStack: [" ArrToStr1d(MouseMode.SpeedStack) "]"
+    ToolTip speedStr , 0, 0
+    SetTimer () => ToolTip(), -1500
+}
 
 #HotIf
 
