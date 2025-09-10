@@ -20,8 +20,22 @@ PopSpeed() {
     MouseMode.speed := MouseMode.speedStack[-1] ; the first speed must be originalSpeed
 }
 
+; mode switch
+^+[:: {
+    global MouseMode
+    MouseMode.isOn := !MouseMode.isOn
+    ToolTip (MouseMode.isOn ? "On" : "Off"), 0, 0
+    SetTimer () => ToolTip(), -1500
+}
+
 ; move for every 10ms
 SetTimer MoveMouse, 10
+MoveMouse() {
+    global MouseMode
+    if ((MouseMode.moveX or MouseMode.moveY) and MouseMode.isOn) {
+        MouseMove(MouseMode.moveX * MouseMode.speed, MouseMode.moveY * MouseMode.speed, 0, "Relative")
+    }
+}
 
 ; use hjkl to move left, down, up, right
 #HotIf MouseMode.isOn
@@ -66,38 +80,15 @@ a up::PopSpeed()
 
 ; mouse clicks
 ; left click
-c:: {
-    Click "Down"
-}
-c up:: {
-    Click "Up"
-}
+c::Click("Down")
+c up::Click("Up")
 
 ; right click
-::: {
-    Click "Right"
-}
+:::Click("Right")
 
 ; wheel up and down
-u:: {
-    Click "WheelUp"
-}
-i:: {
-    Click "WheelDown"
-}
+u::Click("WheelUp")
+i::Click("WheelDown")
 
 #HotIf
 
-^+[:: {
-    global MouseMode
-    MouseMode.isOn := !MouseMode.isOn
-    ToolTip (MouseMode.isOn ? "On" : "Off"), 0, 0
-    SetTimer () => ToolTip(), -1500
-}
-
-MoveMouse() {
-    global MouseMode
-    if ((MouseMode.moveX or MouseMode.moveY) and MouseMode.isOn) {
-        MouseMove(MouseMode.moveX * MouseMode.speed, MouseMode.moveY * MouseMode.speed, 0, "Relative")
-    }
-}
