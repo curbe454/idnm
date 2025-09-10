@@ -1,122 +1,88 @@
-global mouseMode := true
-global speed := 2.0
-global moveX := 0
-global moveY := 0
+global MouseMode := {
+    isOn: true,
+    speed: 2.0,
+    moveX: 0,
+    moveY: 0,
+}
 
 ; move for every 10ms
 SetTimer MoveMouse, 10
 
 ; use hjkl to move left, down, up, right
-#HotIf mouseMode
-h:: {
-    global moveX
-    moveX := -10
-}
-h up:: {
-    global moveX
-    if (moveX < 0)
-        moveX := 0
-}
+#HotIf MouseMode.isOn
 
-l:: {
-    global moveX
-    moveX := 10
+h::MouseMode.moveX := -10
+l::MouseMode.moveX := 10
+k::MouseMode.moveY := -10
+j::MouseMode.moveY := 10
+
+h up:: {
+    global MouseMode
+    if (MouseMode.moveX < 0)
+        MouseMode.moveX := 0
 }
 l up:: {
-    global moveX
-    if (moveX > 0)
-        moveX := 0
-}
-
-k:: {
-    global moveY
-    moveY := -10
+    global MouseMode
+    if (MouseMode.moveX > 0)
+        MouseMode.moveX := 0
 }
 k up:: {
-    global moveY
-    if (moveY < 0)
-        moveY := 0
-}
-
-j:: {
-    global moveY
-    moveY := 10
+    global MouseMode
+    if (MouseMode.moveY < 0)
+        MouseMode.moveY := 0
 }
 j up:: {
-    global moveY
-    if (moveY > 0)
-        moveY := 0
+    global MouseMode
+    if (MouseMode.moveY > 0)
+        MouseMode.moveY := 0
 }
 
-; speed management
+; mouse speed management
 ; fast, dash, slow, and amble
-f:: {
-    global speed
-    speed := 8.0
-}
-f up:: {
-    global speed
-    speed := 2.0
-}
+f::MouseMode.speed := 8.0
+d::MouseMode.speed := 4.0
+s::MouseMode.speed := 1.0
+a::MouseMode.speed := 0.5
 
-d:: {
-    global speed
-    speed := 4.0
-}
-d up:: {
-    global speed
-    speed := 2.0
-}
-
-s:: {
-    global speed
-    speed := 1.0
-}
-s up:: {
-    global speed
-    speed := 2.0
-}
-
-a:: {
-    global speed
-    speed := 0.5
-}
-a up:: {
-    global speed
-    speed := 2.0
-}
+f up::MouseMode.speed := 2.0
+d up::MouseMode.speed := 2.0
+s up::MouseMode.speed := 2.0
+a up::MouseMode.speed := 2.0
 
 ; mouse clicks
 ; left click
-space:: {
+c:: {
     Click "Down"
 }
-space up:: {
+c up:: {
     Click "Up"
 }
 
 ; right click
 ::: {
-    Click 'R'
+    Click "Right"
 }
 
 ; wheel up and down
 u:: {
-    Click 'WheelUp'
+    Click "WheelUp"
 }
 i:: {
-    Click 'WheelDown'
+    Click "WheelDown"
 }
 
 #HotIf
+
 ^+[:: {
-    global mouseMode
-    mouseMode := !mouseMode 
+    global MouseMode
+    MouseMode.isOn := !MouseMode.isOn
+    ToolTip (MouseMode.isOn ? "On" : "Off"), 0, 0
+    SetTimer () => ToolTip(), -1500
 }
 
 MoveMouse() {
-    global moveX, moveY, mouseMode, speed
-    if ((moveX or moveY) and mouseMode) {
-        MouseMove(moveX * speed, moveY * speed, 0, "R")
+    global MouseMode
+    if ((MouseMode.moveX or MouseMode.moveY) and MouseMode.isOn) {
+        MouseMove(MouseMode.moveX * MouseMode.speed, MouseMode.moveY * MouseMode.speed, 0, "Relative")
     }
 }
