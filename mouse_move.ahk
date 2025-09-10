@@ -1,8 +1,23 @@
+originalSpeed := 2.0
+
 global MouseMode := {
     isOn: true,
     speed: 2.0,
     moveX: 0,
     moveY: 0,
+    speedStack: [originalSpeed,]
+}
+
+PushSpeed(newSpeed) {
+    global MouseMode
+    MouseMode.speedStack.Push(newSpeed)
+    MouseMode.speed := newSpeed
+}
+
+PopSpeed() {
+    global MouseMode
+    MouseMode.speedStack.Pop()
+    MouseMode.speed := MouseMode.speedStack[-1] ; the first speed must be originalSpeed
 }
 
 ; move for every 10ms
@@ -39,15 +54,15 @@ j up:: {
 
 ; mouse speed management
 ; fast, dash, slow, and amble
-f::MouseMode.speed := 8.0
-d::MouseMode.speed := 4.0
-s::MouseMode.speed := 1.0
-a::MouseMode.speed := 0.5
+f::PushSpeed(8.0)
+d::PushSpeed(4.0)
+s::PushSpeed(1.0)
+a::PushSpeed(0.5)
 
-f up::MouseMode.speed := 2.0
-d up::MouseMode.speed := 2.0
-s up::MouseMode.speed := 2.0
-a up::MouseMode.speed := 2.0
+f up::PopSpeed()
+d up::PopSpeed()
+s up::PopSpeed()
+a up::PopSpeed()
 
 ; mouse clicks
 ; left click
