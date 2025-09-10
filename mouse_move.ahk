@@ -85,6 +85,10 @@ d up::PopSpeed()
 s up::PopSpeed()
 a up::PopSpeed()
 
+; change original speed
+q::MouseMode.SpeedStack[1] := MouseMode.SpeedStack + 1.0
+w::MouseMode.SpeedStack[1] := MouseMode.SpeedStack - 1.0
+
 ; mouse clicks
 ; left click
 c::Click("Down")
@@ -103,6 +107,9 @@ p:: {
     speedStr := "SpeedStack: [" ArrToStr1d(MouseMode.SpeedStack) "]"
     ToolTip speedStr , 0, 0
     SetTimer () => ToolTip(), -1500
+
+    ; bug happens when I use bluetooth keyboard. reset speed stack for unstable IO.
+    MouseMode.speedStack := [MouseMode.speedStack[1]]
 }
 
 #HotIf
