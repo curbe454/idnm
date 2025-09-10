@@ -17,6 +17,12 @@ PushSpeed(newSpeed) {
 PopSpeed() {
     global MouseMode
     MouseMode.speedStack.Pop()
+
+    ; bug happens when I use bluetooth keyboard. reset speed stack for unstable IO.
+    MouseMode.speedStack := [
+        MouseMode.speedStack.Length > 0 ? MouseMode.speedStack[1] : MouseMode.speed,
+    ]
+
     MouseMode.speed := MouseMode.speedStack[-1] ; the first speed must be originalSpeed
 }
 
@@ -86,8 +92,8 @@ s up::PopSpeed()
 a up::PopSpeed()
 
 ; change original speed
-q::MouseMode.SpeedStack[1] := MouseMode.SpeedStack + 1.0
-w::MouseMode.SpeedStack[1] := MouseMode.SpeedStack - 1.0
+q::MouseMode.SpeedStack[1] := MouseMode.SpeedStack[1] + 1.0
+w::MouseMode.SpeedStack[1] := MouseMode.SpeedStack[1] - 1.0
 
 ; mouse clicks
 ; left click
@@ -107,9 +113,6 @@ p:: {
     speedStr := "SpeedStack: [" ArrToStr1d(MouseMode.SpeedStack) "]"
     ToolTip speedStr , 0, 0
     SetTimer () => ToolTip(), -1500
-
-    ; bug happens when I use bluetooth keyboard. reset speed stack for unstable IO.
-    MouseMode.speedStack := [MouseMode.speedStack[1]]
 }
 
 #HotIf
